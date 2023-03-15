@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using InscriptionsApiLocal.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using ApiMaterias.Models;
 
 namespace ApiMaterias.Controllers
 {
@@ -95,25 +95,7 @@ namespace ApiMaterias.Controllers
             return CreatedAtAction("GetSubject", new { id = subject.SubjectId }, subject);
         }
 
-        // DELETE: api/Subjects/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteSubject(int id)
-        {
-            if (_context.Subjects == null)
-            {
-                return NotFound();
-            }
-            var subject = await _context.Subjects.FindAsync(id);
-            if (subject == null)
-            {
-                return NotFound();
-            }
-
-            _context.Subjects.Remove(subject);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
+       
 
         private bool SubjectExists(int id)
         {
