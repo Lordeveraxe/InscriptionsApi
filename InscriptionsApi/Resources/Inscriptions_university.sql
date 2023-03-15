@@ -1,5 +1,5 @@
 create table Students(
-    id_student int NOT NULL IDENTITY(1,1) ,
+    student_id int NOT NULL IDENTITY(1,1) ,
     student_name varchar(100) NOT NULL,
     student_ln varchar(100) NOT NULL,
     type_doc_student varchar(50) NOT NULL,
