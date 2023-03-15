@@ -27,6 +27,7 @@ alter table Students add PRIMARY KEY (student_id);
 
 alter table Subjects add PRIMARY KEY (subject_id);
 
+alter table Inscriptions add PRIMARY KEY (incription_id);
 
 alter table Inscriptions add FOREIGN KEY (student_id) REFERENCES Students(student_id);
 alter table Inscriptions add FOREIGN KEY (subject_id) REFERENCES Subjects(subject_id);
