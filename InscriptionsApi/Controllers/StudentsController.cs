@@ -95,26 +95,6 @@ namespace lab2_Distribuidos.Controllers
             return CreatedAtAction("GetStudent", new { id = student.StudentId }, student);
         }
 
-        // DELETE: api/Students/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteStudent(int id)
-        {
-            if (_context.Students == null)
-            {
-                return NotFound();
-            }
-            var student = await _context.Students.FindAsync(id);
-            if (student == null)
-            {
-                return NotFound();
-            }
-
-            _context.Students.Remove(student);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
-
         private bool StudentExists(int id)
         {
             return (_context.Students?.Any(e => e.StudentId == id)).GetValueOrDefault();
