@@ -1,4 +1,5 @@
 using InscriptionsApiLocal.Models;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,7 +10,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.AddSqlServer<InscriptionsUniversityContext>(builder.Configuration.GetConnectionString("BankConnection"));
+builder.Services.AddDbContext<InscriptionsUniversityContext>(options =>
+    options.UseSqlServer(Environment.GetEnvironmentVariable("ConecctionString", EnvironmentVariableTarget.Machine)));
 
 var app = builder.Build();
 
