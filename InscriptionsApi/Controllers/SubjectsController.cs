@@ -20,7 +20,7 @@ namespace ApiMaterias.Controllers
             _context = context;
         }
 
-        // GET: api/Subjects
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Subject>>> GetSubjects()
         {
@@ -31,7 +31,7 @@ namespace ApiMaterias.Controllers
             return await _context.Subjects.ToListAsync();
         }
 
-        // GET: api/Subjects/5
+  
         [HttpGet("{id}")]
         public async Task<ActionResult<Subject>> GetSubject(int id)
         {
@@ -49,8 +49,7 @@ namespace ApiMaterias.Controllers
             return subject;
         }
 
-        // PUT: api/Subjects/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        
         [HttpPut("{id}")]
         public async Task<IActionResult> PutSubject(int id, Subject subject)
         {
@@ -80,8 +79,7 @@ namespace ApiMaterias.Controllers
             return NoContent();
         }
 
-        // POST: api/Subjects
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        
         [HttpPost]
         public async Task<ActionResult<Subject>> PostSubject(Subject subject)
         {
