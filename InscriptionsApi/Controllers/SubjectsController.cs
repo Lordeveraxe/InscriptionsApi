@@ -93,7 +93,33 @@ namespace ApiMaterias.Controllers
             return CreatedAtAction("GetSubject", new { id = subject.SubjectId }, subject);
         }
 
-       
+
+        [HttpPatch("{id}/state")]
+        public async Task<IActionResult> ChangeStatusSubject(int id, int state)
+        {
+            var subject = await _context.Subjects.FindAsync(id);
+            if (subject == null)
+            {
+                return NotFound();
+            }
+            subject.SubjectStatus = state;
+            try
+            {
+                await _context.SaveChangesAsync();
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!SubjectExists(id))
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    throw;
+                }
+            }
+            return NoContent();
+        }
 
         private bool SubjectExists(int id)
         {
