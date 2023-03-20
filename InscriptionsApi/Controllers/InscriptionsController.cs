@@ -20,7 +20,6 @@ namespace InscriptionsApi.Controllers
             _context = context;
         }
 
-        // GET: api/Inscriptions
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Inscription>>> GetInscriptions()
         {
@@ -31,7 +30,6 @@ namespace InscriptionsApi.Controllers
             return await _context.Inscriptions.ToListAsync();
         }
 
-        // GET: api/Inscriptions/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Inscription>> GetInscription(int id)
         {
@@ -49,8 +47,7 @@ namespace InscriptionsApi.Controllers
             return inscription;
         }
 
-        // PUT: api/Inscriptions/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+       
         [HttpPut("{id}")]
         public async Task<IActionResult> PutInscription(int id, Inscription inscription)
         {
@@ -80,8 +77,6 @@ namespace InscriptionsApi.Controllers
             return NoContent();
         }
 
-        // POST: api/Inscriptions
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
         public async Task<ActionResult<Inscription>> PostInscription(Inscription inscription)
         {
@@ -95,25 +90,7 @@ namespace InscriptionsApi.Controllers
             return CreatedAtAction("GetInscription", new { id = inscription.IncriptionId }, inscription);
         }
 
-        // DELETE: api/Inscriptions/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteInscription(int id)
-        {
-            if (_context.Inscriptions == null)
-            {
-                return NotFound();
-            }
-            var inscription = await _context.Inscriptions.FindAsync(id);
-            if (inscription == null)
-            {
-                return NotFound();
-            }
-
-            _context.Inscriptions.Remove(inscription);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
+      
 
         private bool InscriptionExists(int id)
         {
