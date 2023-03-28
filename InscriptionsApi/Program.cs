@@ -14,7 +14,12 @@ builder.Services.AddDbContext<InscriptionsUniversityContext>(options =>
     options.UseSqlServer(Environment.GetEnvironmentVariable("ConecctionString", EnvironmentVariableTarget.Machine)));
 
 var app = builder.Build();
+app.UseCors(x => x
+            .AllowAnyOrigin()
+            .AllowAnyMethod()
+            .AllowAnyHeader());
 
+app.UseHttpsRedirection();
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {

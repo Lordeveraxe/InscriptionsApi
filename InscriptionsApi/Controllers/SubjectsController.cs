@@ -1,11 +1,14 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Threading.Tasks;
 using InscriptionsApiLocal.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.OpenApi.Any;
+using Newtonsoft.Json;
 
 namespace ApiMaterias.Controllers
 {
@@ -24,14 +27,57 @@ namespace ApiMaterias.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Subject>>> GetSubjects()
         {
-          if (_context.Subjects == null)
-          {
-              return NotFound();
-          }
+            if (_context.Subjects == null)
+            {
+                return NotFound();
+            }
+
             return await _context.Subjects.ToListAsync();
         }
 
-  
+        [HttpGet("withSorts")]
+        public async Task<ActionResult<IEnumerable<Subject>>> GetSubjectsWithFilters(string sortBy = "Id", string sortOrder = "asc", int page = 1, int pageSize = 10)
+        {
+            if (_context.Subjects == null)
+            {
+                return NotFound();
+            }
+
+            var subjects = _context.Subjects.AsQueryable();
+            if (!string.IsNullOrEmpty(sortBy) && !string.IsNullOrEmpty(sortOrder))
+            {
+                switch (sortBy.ToLower())
+                {
+                    case "name":
+                        subjects = (sortOrder == "desc") ? subjects.OrderByDescending(s => s.SubjectName) : subjects.OrderBy(s => s.SubjectName);
+                        break;
+                    case "id":
+                        subjects = (sortOrder == "desc") ? subjects.OrderByDescending(s => s.SubjectId) : subjects.OrderBy(s => s.SubjectId);
+                        break;
+                    case "status":
+                        subjects = (sortOrder == "desc") ? subjects.OrderByDescending(s => s.SubjectStatus) : subjects.OrderBy(s => s.SubjectStatus);
+                        break;
+                    case "capacity":
+                        subjects = (sortOrder == "desc") ? subjects.OrderByDescending(s => s.SubjectCapacity) : subjects.OrderBy(s => s.SubjectCapacity);
+                        break;
+                    default:
+                        subjects = subjects.OrderBy(s => s.SubjectId);
+                        break;
+                }
+            }
+
+            var totalCount = await subjects.CountAsync();
+            var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
+            var items = await subjects.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
+
+            return Ok(new
+            {
+                Items = items,
+                TotalCount = totalCount,
+                TotalPages = totalPages
+            });
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Subject>> GetSubject(int id)
         {
