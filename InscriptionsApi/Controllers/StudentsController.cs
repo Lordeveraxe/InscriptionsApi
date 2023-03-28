@@ -30,6 +30,90 @@ namespace lab2_Distribuidos.Controllers
             return await _context.Students.ToListAsync();
         }
 
+        [HttpGet("withSorts")]
+        public async Task<ActionResult<IEnumerable<Student>>> GetStudents(int pageNumber = 1, int pageSize = 10, string sortOrder = "", string sortBy = "", string searchString = "")
+        {
+            var studentsQuery = _context.Students.AsQueryable();
+
+            studentsQuery = ApplySearchStringFilter(studentsQuery, searchString);
+            studentsQuery = ApplySortOrderBy(studentsQuery, sortOrder, sortBy);
+
+            var students = await studentsQuery
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+
+            return students;
+        }
+
+
+        private IQueryable<Student> ApplySearchStringFilter(IQueryable<Student> studentsQuery, string searchString)
+        {
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                studentsQuery = studentsQuery.Where(s => s.StudentName.StartsWith(searchString));
+            }
+
+            return studentsQuery;
+        }
+
+        private IQueryable<Student> ApplySortOrderBy(IQueryable<Student> studentsQuery, string sortOrder, string sortBy)
+        {
+            switch (sortBy)
+            {
+                case "studentName":
+                    studentsQuery = sortOrder switch
+                    {
+                        "0" => studentsQuery.OrderBy(s => s.StudentName),
+                        "1" => studentsQuery.OrderByDescending(s => s.StudentName),
+                        "" => studentsQuery.OrderBy(s => s.StudentName),
+                        _ => throw new ArgumentException("Invalid sortOrder value. Valid values are '0' and '1'.", nameof(sortOrder))
+                    };
+                    break;
+                case "studentId":
+                    studentsQuery = sortOrder switch
+                    {
+                        "0" => studentsQuery.OrderBy(s => s.StudentId),
+                        "1" => studentsQuery.OrderByDescending(s => s.StudentId),
+                        "" => studentsQuery.OrderBy(s => s.StudentId),
+                        _ => throw new ArgumentException("Invalid sortOrder value. Valid values are '0' and '1'.", nameof(sortOrder))
+                    };
+                    break;
+                case "studentLn":
+                    studentsQuery = sortOrder switch
+                    {
+                        "0" => studentsQuery.OrderBy(s => s.StudentLn),
+                        "1" => studentsQuery.OrderByDescending(s => s.StudentLn),
+                        "" => studentsQuery.OrderBy(s => s.StudentLn),
+                        _ => throw new ArgumentException("Invalid sortOrder value. Valid values are '0' and '1'.", nameof(sortOrder))
+                    };
+                    break;
+                case "typeDocStudent":
+                    studentsQuery = sortOrder switch
+                    {
+                        "0" => studentsQuery.OrderBy(s => s.TypeDocStudent),
+                        "1" => studentsQuery.OrderByDescending(s => s.TypeDocStudent),
+                        "" => studentsQuery.OrderBy(s => s.TypeDocStudent),
+                        _ => throw new ArgumentException("Invalid sortOrder value. Valid values are '0' and '1'.", nameof(sortOrder))
+                    };
+                    break;
+                case "studentGenre":
+                    studentsQuery = sortOrder switch
+                    {
+                        "0" => studentsQuery.OrderBy(s => s.StudentGenre),
+                        "1" => studentsQuery.OrderByDescending(s => s.StudentGenre),
+                        "" => studentsQuery.OrderBy(s => s.StudentGenre),
+                        _ => throw new ArgumentException("Invalid sortOrder value. Valid values are '0' and '1'.", nameof(sortOrder))
+                    };
+                    break;
+                default:
+                    studentsQuery = studentsQuery.OrderBy(s => s.StudentId);
+                    break;
+            }
+
+            return studentsQuery;
+        }
+
         [HttpGet("{id}")]
         public async Task<ActionResult<Student>> GetStudent(int id)
         {
