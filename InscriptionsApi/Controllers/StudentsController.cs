@@ -67,7 +67,7 @@ namespace lab2_Distribuidos.Controllers
                         "0" => studentsQuery.OrderBy(s => s.StudentName),
                         "1" => studentsQuery.OrderByDescending(s => s.StudentName),
                         "" => studentsQuery.OrderBy(s => s.StudentName),
-                        _ => throw new ArgumentException("Invalid sortOrder value. Valid values are '0' and '1'.", nameof(sortOrder))
+                        _ => throw new ArgumentException("sortOrder incorrecto, por favor ingrese para ascendente y 1 para descendente", nameof(sortOrder))
                     };
                     break;
                 case "studentId":
@@ -76,7 +76,7 @@ namespace lab2_Distribuidos.Controllers
                         "0" => studentsQuery.OrderBy(s => s.StudentId),
                         "1" => studentsQuery.OrderByDescending(s => s.StudentId),
                         "" => studentsQuery.OrderBy(s => s.StudentId),
-                        _ => throw new ArgumentException("Invalid sortOrder value. Valid values are '0' and '1'.", nameof(sortOrder))
+                        _ => throw new ArgumentException("sortOrder incorrecto, por favor ingrese para ascendente y 1 para descendente", nameof(sortOrder))
                     };
                     break;
                 case "studentLn":
@@ -85,7 +85,7 @@ namespace lab2_Distribuidos.Controllers
                         "0" => studentsQuery.OrderBy(s => s.StudentLn),
                         "1" => studentsQuery.OrderByDescending(s => s.StudentLn),
                         "" => studentsQuery.OrderBy(s => s.StudentLn),
-                        _ => throw new ArgumentException("Invalid sortOrder value. Valid values are '0' and '1'.", nameof(sortOrder))
+                        _ => throw new ArgumentException("sortOrder incorrecto, por favor ingrese para ascendente y 1 para descendente", nameof(sortOrder))
                     };
                     break;
                 case "typeDocStudent":
@@ -94,7 +94,7 @@ namespace lab2_Distribuidos.Controllers
                         "0" => studentsQuery.OrderBy(s => s.TypeDocStudent),
                         "1" => studentsQuery.OrderByDescending(s => s.TypeDocStudent),
                         "" => studentsQuery.OrderBy(s => s.TypeDocStudent),
-                        _ => throw new ArgumentException("Invalid sortOrder value. Valid values are '0' and '1'.", nameof(sortOrder))
+                        _ => throw new ArgumentException("sortOrder incorrecto, por favor ingrese para ascendente y 1 para descendente", nameof(sortOrder))
                     };
                     break;
                 case "studentGenre":
@@ -103,11 +103,17 @@ namespace lab2_Distribuidos.Controllers
                         "0" => studentsQuery.OrderBy(s => s.StudentGenre),
                         "1" => studentsQuery.OrderByDescending(s => s.StudentGenre),
                         "" => studentsQuery.OrderBy(s => s.StudentGenre),
-                        _ => throw new ArgumentException("Invalid sortOrder value. Valid values are '0' and '1'.", nameof(sortOrder))
+                        _ => throw new ArgumentException("sortOrder incorrecto, por favor ingrese para ascendente y 1 para descendente", nameof(sortOrder))
                     };
                     break;
                 default:
-                    studentsQuery = studentsQuery.OrderBy(s => s.StudentId);
+                    studentsQuery = sortOrder switch
+                    {
+                        "0" => studentsQuery.OrderBy(s => s.StudentId),
+                        "1" => studentsQuery.OrderByDescending(s => s.StudentId),
+                        "" => studentsQuery.OrderBy(s => s.StudentId),
+                        _ => throw new ArgumentException("sortOrder incorrecto, por favor ingrese para ascendente y 1 para descendente", nameof(sortOrder))
+                    };
                     break;
             }
 
