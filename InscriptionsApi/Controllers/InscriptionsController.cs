@@ -15,6 +15,7 @@ namespace InscriptionsApi.Controllers
     [ApiController]
     public class InscriptionsController : ControllerBase
     {
+        private int tamInscriptions = 10;
         private readonly InscriptionsUniversityContext _context;
 
         public InscriptionsController(InscriptionsUniversityContext context)
@@ -95,8 +96,11 @@ namespace InscriptionsApi.Controllers
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<InscriptionWithNames>>> GetInscriptionsWithNames(int pageNumber = 1, int pageSize = 10, string sortOrder = "", string sortBy = "", string searchString = "")
         {
+            
+        var studentsQuery = _context.Inscriptions.AsQueryable();
             var inscriptionForStudents = _context.Inscriptions.OrderBy(p => p.Student.StudentName).ToList();
-
+            tamInscriptions = await studentsQuery.CountAsync();
+            HttpContext.Response.Headers.Add("tamanio-inscriptions", tamInscriptions.ToString());
             var inscriptions = await _context.Inscriptions
                 .Include(i => i.Student)
                 .Include(i => i.Subject)
@@ -108,6 +112,22 @@ namespace InscriptionsApi.Controllers
 
             switch (sortBy)
             {
+                case "InscriptionsId":
+                    if (sortOrder == "asc")
+                    {
+                        inscriptionsfilterForSearch = !string.IsNullOrEmpty(searchString) ?
+                            _context.Inscriptions.Where(s => s.IncriptionId.ToString().StartsWith(searchString)).OrderBy(p => p.IncriptionId).ToList() :
+                            _context.Inscriptions.OrderBy(p => p.IncriptionId).ToList();
+
+                    }
+                    else if (sortOrder == "desc")
+                    {
+                        inscriptionsfilterForSearch = !string.IsNullOrEmpty(searchString) ?
+                             _context.Inscriptions.Where(s => s.IncriptionId.ToString().StartsWith(searchString)).OrderByDescending(p => p.IncriptionId).ToList() :
+                             _context.Inscriptions.OrderByDescending(p => p.IncriptionId).ToList();
+                    }
+
+                    break;
                 case "studentName":
                     if (sortOrder == "asc")
                     {
@@ -156,7 +176,6 @@ namespace InscriptionsApi.Controllers
                             _context.Inscriptions.OrderByDescending(p => p.IncriptionDate).ToList();
                        // inscriptionsfilterForSearch = _context.Inscriptions.OrderByDescending(p => p.IncriptionDate).ToList();
                     }
-                    break;
                     break;
                 default:
                     inscriptionsfilterForSearch = _context.Inscriptions.OrderBy(p => p.IncriptionId).ToList();
