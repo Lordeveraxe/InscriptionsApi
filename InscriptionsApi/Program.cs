@@ -17,7 +17,8 @@ var app = builder.Build();
 app.UseCors(x => x
             .AllowAnyOrigin()
             .AllowAnyMethod()
-            .AllowAnyHeader());
+            .AllowAnyHeader()
+            .WithExposedHeaders("x-my-custom-header", "tamanio"));
 
 app.UseHttpsRedirection();
 // Configure the HTTP request pipeline.
