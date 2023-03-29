@@ -17,6 +17,7 @@ namespace ApiMaterias.Controllers
     public class SubjectsController : ControllerBase
     {
         private readonly InscriptionsUniversityContext _context;
+        private int tamSubjects = 0;
 
         public SubjectsController(InscriptionsUniversityContext context)
         {
@@ -67,6 +68,10 @@ namespace ApiMaterias.Controllers
             }
 
             var totalCount = await subjects.CountAsync();
+            this.tamSubjects = totalCount;
+
+            HttpContext.Response.Headers.Add("tamanio-subjects", tamSubjects.ToString());
+
             var totalPages = (int)Math.Ceiling((double)totalCount / pageSize);
             var items = await subjects.Skip((page - 1) * pageSize).Take(pageSize).ToListAsync();
 

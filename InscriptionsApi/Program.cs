@@ -18,7 +18,7 @@ app.UseCors(x => x
             .AllowAnyOrigin()
             .AllowAnyMethod()
             .AllowAnyHeader()
-            .WithExposedHeaders("x-my-custom-header", "tamanio"));
+            .WithExposedHeaders("x-my-custom-header", "tamanio", "tamanio-subjects", "tamanio-inscriptions"));
 
 app.UseHttpsRedirection();
 // Configure the HTTP request pipeline.
