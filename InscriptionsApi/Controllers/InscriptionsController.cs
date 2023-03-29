@@ -6,6 +6,8 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using InscriptionsApiLocal.Models;
+using InscriptionsApi.Controllers.DTO;
+using System.Globalization;
 
 namespace InscriptionsApi.Controllers
 {
@@ -23,20 +25,20 @@ namespace InscriptionsApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Inscription>>> GetInscriptions()
         {
-          if (_context.Inscriptions == null)
-          {
-              return NotFound();
-          }
+            if (_context.Inscriptions == null)
+            {
+                return NotFound();
+            }
             return await _context.Inscriptions.ToListAsync();
         }
 
         [HttpGet("{id}")]
         public async Task<ActionResult<Inscription>> GetInscription(int id)
         {
-          if (_context.Inscriptions == null)
-          {
-              return NotFound();
-          }
+            if (_context.Inscriptions == null)
+            {
+                return NotFound();
+            }
             var inscription = await _context.Inscriptions.FindAsync(id);
 
             if (inscription == null)
@@ -47,7 +49,7 @@ namespace InscriptionsApi.Controllers
             return inscription;
         }
 
-       
+
         [HttpPut("{id}")]
         public async Task<IActionResult> PutInscription(int id, Inscription inscription)
         {
@@ -80,21 +82,148 @@ namespace InscriptionsApi.Controllers
         [HttpPost]
         public async Task<ActionResult<Inscription>> PostInscription(Inscription inscription)
         {
-          if (_context.Inscriptions == null)
-          {
-              return Problem("Entity set 'InscriptionsUniversityContext.Inscriptions'  is null.");
-          }
+            if (_context.Inscriptions == null)
+            {
+                return Problem("Entity set 'InscriptionsUniversityContext.Inscriptions'  is null.");
+            }
             _context.Inscriptions.Add(inscription);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetInscription", new { id = inscription.IncriptionId }, inscription);
         }
+        
+        [HttpGet("all")]
+        public async Task<ActionResult<IEnumerable<InscriptionWithNames>>> GetInscriptionsWithNames(int pageNumber = 1, int pageSize = 10, string sortOrder = "", string sortBy = "", string searchString = "")
+        {
+            var inscriptionForStudents = _context.Inscriptions.OrderBy(p => p.Student.StudentName).ToList();
 
-      
+            var inscriptions = await _context.Inscriptions
+                .Include(i => i.Student)
+                .Include(i => i.Subject)
+                .ToListAsync();
+            // var pedidos = _context.Inscriptions.OrderBy(p => p.Student.StudentName).ToList();
+
+            var inscriptionsfilterForSearch = inscriptionForStudents;
+            //var aux = pedidos
+
+            switch (sortBy)
+            {
+                case "studentName":
+                    if (sortOrder == "asc")
+                    {
+                        inscriptionsfilterForSearch = !string.IsNullOrEmpty(searchString) ?
+                            _context.Inscriptions.Where(s => s.Student.StudentName.StartsWith(searchString)).OrderBy(p => p.Student.StudentName).ToList() :
+                            _context.Inscriptions.OrderBy(p => p.Student.StudentName).ToList();
+
+                    }
+                    else if (sortOrder == "desc")
+                    {
+                        inscriptionsfilterForSearch = !string.IsNullOrEmpty(searchString) ?
+                             _context.Inscriptions.Where(s => s.Student.StudentName.StartsWith(searchString)).OrderByDescending(p => p.Student.StudentName).ToList() :
+                             _context.Inscriptions.OrderByDescending(p => p.Student.StudentName).ToList();
+                    }
+
+                    break;
+                case "subjectName":
+                    if (sortOrder == "asc")
+                    {
+                        inscriptionsfilterForSearch = !string.IsNullOrEmpty(searchString) ?
+                            _context.Inscriptions.Where(s => s.Student.StudentName.StartsWith(searchString)).OrderBy(p => p.Subject.SubjectName).ToList() :
+                            _context.Inscriptions.OrderBy(p => p.Subject.SubjectName).ToList();
+                        
+                    }
+                    else if (sortOrder == "desc")
+                    {
+                        inscriptionsfilterForSearch = !string.IsNullOrEmpty(searchString) ?
+                            _context.Inscriptions.Where(s => s.Student.StudentName.StartsWith(searchString)).OrderByDescending(p => p.Subject.SubjectName).ToList() :
+                            _context.Inscriptions.OrderByDescending(p => p.Subject.SubjectName).ToList();
+                       
+                    }
+                    break;
+                case "dateInscription":
+                    if (sortOrder == "asc")
+                    {
+                        inscriptionsfilterForSearch = !string.IsNullOrEmpty(searchString) ?
+                            _context.Inscriptions.Where(s => s.Student.StudentName.StartsWith(searchString)).OrderBy(p => p.IncriptionDate).ToList() :
+                            _context.Inscriptions.OrderBy(p => p.IncriptionDate).ToList();
+
+                      //  inscriptionsfilterForSearch = _context.Inscriptions.OrderBy(p => p.IncriptionDate).ToList();
+                    }
+                    else if (sortOrder == "desc")
+                    {
+                        inscriptionsfilterForSearch = !string.IsNullOrEmpty(searchString) ?
+                            _context.Inscriptions.Where(s => s.Student.StudentName.StartsWith(searchString)).OrderByDescending(p => p.IncriptionDate).ToList() :
+                            _context.Inscriptions.OrderByDescending(p => p.IncriptionDate).ToList();
+                       // inscriptionsfilterForSearch = _context.Inscriptions.OrderByDescending(p => p.IncriptionDate).ToList();
+                    }
+                    break;
+                    break;
+                default:
+                    inscriptionsfilterForSearch = _context.Inscriptions.OrderBy(p => p.IncriptionId).ToList();
+
+                    break;
+            }
+            inscriptionForStudents = inscriptionsfilterForSearch;
+
+            if (!string.IsNullOrEmpty(searchString))
+            {
+                inscriptionForStudents = _context.Inscriptions.Where(s => s.Student.StudentName.StartsWith(searchString)).ToList();
+            }
+
+            var inscriptionsWithNames = inscriptionsfilterForSearch.Select(i => new InscriptionWithNames
+            {
+                IncriptionId = i.IncriptionId,
+                StudentName = i.Student.StudentName,
+                SubjectName = i.Subject.SubjectName,
+                IncriptionDate = i.IncriptionDate
+            }).ToList();
+
+            var student = inscriptionsWithNames
+                 .Skip((pageNumber - 1) * pageSize)
+                 .Take(pageSize)
+                 .ToList();
+
+            return student;
+        }
+
+
+       
+
+        [HttpGet("details/{id}")]
+        public async Task<ActionResult<InscriptionWithNames>> GetInscriptionWithNames(int id)
+        {
+            var inscription = await _context.Inscriptions
+                .Include(i => i.Student)
+                .Include(i => i.Subject)
+                .FirstOrDefaultAsync(i => i.IncriptionId == id);
+
+            if (inscription == null)
+            {
+                return NotFound();
+            }
+
+            var inscriptionWithNames = new InscriptionWithNames
+            {
+                IncriptionId = inscription.IncriptionId,
+                StudentName = inscription.Student.StudentName,
+                SubjectName = inscription.Subject.SubjectName,
+                IncriptionDate = inscription.IncriptionDate
+            };
+
+            return inscriptionWithNames;
+        }
+
+
+
+        
+
+
+
 
         private bool InscriptionExists(int id)
         {
             return (_context.Inscriptions?.Any(e => e.IncriptionId == id)).GetValueOrDefault();
         }
+
     }
 }
