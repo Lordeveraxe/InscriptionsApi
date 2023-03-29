@@ -14,6 +14,7 @@ namespace lab2_Distribuidos.Controllers
     public class StudentsController : ControllerBase
     {
         private readonly InscriptionsUniversityContext _context;
+        private int tamStudents = 10;
 
         public StudentsController(InscriptionsUniversityContext context)
         {
@@ -37,6 +38,10 @@ namespace lab2_Distribuidos.Controllers
 
             studentsQuery = ApplySearchStringFilter(studentsQuery, searchString);
             studentsQuery = ApplySortOrderBy(studentsQuery, sortOrder, sortBy);
+
+            tamStudents = await studentsQuery.CountAsync();
+
+            HttpContext.Response.Headers.Add("tamanio", tamStudents.ToString());
 
             var students = await studentsQuery
                 .Skip((pageNumber - 1) * pageSize)
