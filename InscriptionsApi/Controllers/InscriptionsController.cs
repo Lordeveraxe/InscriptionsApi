@@ -50,16 +50,58 @@ namespace InscriptionsApi.Controllers
             return inscription;
         }
 
+        /* [HttpPut("{id}")]
+                public async Task<IActionResult> PutInscription(int id, Inscription inscription)
+                {
+                    if (id != inscription.IncriptionId)
+                    {
+                        return BadRequest();
+                    }
 
+                    _context.Entry(inscription).State = EntityState.Modified;
+
+                    try
+                    {
+                        await _context.SaveChangesAsync();
+                    }
+                    catch (DbUpdateConcurrencyException)
+                    {
+                        if (!InscriptionExists(id))
+                        {
+                            return NotFound();
+                        }
+                        else
+                        {
+                            throw;
+                        }
+                    }
+
+                    return NoContent();
+                }*/
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutInscription(int id, Inscription inscription)
+        public async Task<IActionResult> Put(int id, int studentId, string subjectName)
         {
-            if (id != inscription.IncriptionId)
+            var inscription = await _context.Inscriptions.FindAsync(id);
+            if (inscription == null)
             {
-                return BadRequest();
+                return NotFound();
             }
 
-            _context.Entry(inscription).State = EntityState.Modified;
+            var student = await _context.Students.FindAsync(studentId);
+            if (student == null)
+            {
+                return NotFound("Student not found");
+            }
+
+            var subject = await _context.Subjects.FirstOrDefaultAsync(s => s.SubjectName == subjectName);
+            if (subject == null)
+            {
+                return NotFound("Subject not found");
+            }
+
+            inscription.StudentId = studentId;
+            inscription.SubjectId = subject.SubjectId;
+            inscription.IncriptionDate = DateTime.Now;
 
             try
             {
@@ -67,7 +109,7 @@ namespace InscriptionsApi.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!InscriptionExists(id))
+                if (!InscriptionExistsTWO(id))
                 {
                     return NotFound();
                 }
@@ -80,19 +122,59 @@ namespace InscriptionsApi.Controllers
             return NoContent();
         }
 
-        [HttpPost]
-        public async Task<ActionResult<Inscription>> PostInscription(Inscription inscription)
+        private bool InscriptionExistsTWO(int id)
         {
+            return _context.Inscriptions.Any(i => i.IncriptionId == id);
+        }
+
+        /*  [HttpPost]
+          public async Task<ActionResult<Inscription>> PostInscription(Inscription inscription)
+          {
+              if (_context.Inscriptions == null)
+              {
+                  return Problem("Entity set 'InscriptionsUniversityContext.Inscriptions'  is null.");
+              }
+              _context.Inscriptions.Add(inscription);
+              await _context.SaveChangesAsync();
+
+              return CreatedAtAction("GetInscription", new { id = inscription.IncriptionId }, inscription);
+          }*/
+        [HttpPost]
+        public async Task<ActionResult<InscriptionPostDTO>> PostInscription(int studentId, string subjectName)
+        {
+            var subject = await _context.Subjects.FirstOrDefaultAsync(s => s.SubjectName == subjectName);
+            if (subject == null)
+            {
+                return NotFound("Subject not found");
+            }
+
+            var inscription = new InscriptionPostDTO()
+            {
+                StudentId = studentId,
+                SubjectId = subject.SubjectId,
+                IncriptionDate = DateTime.Now
+            };
+
             if (_context.Inscriptions == null)
             {
-                return Problem("Entity set 'InscriptionsUniversityContext.Inscriptions'  is null.");
+                return Problem("Entity set 'InscriptionsUniversityContext.Inscriptions' is null.");
             }
-            _context.Inscriptions.Add(inscription);
+
+            _context.Inscriptions.Add(new Inscription()
+            {
+                StudentId = inscription.StudentId,
+                SubjectId = inscription.SubjectId,
+                IncriptionDate = inscription.IncriptionDate
+            });
+
             await _context.SaveChangesAsync();
+
+            inscription.IncriptionId = inscription.IncriptionId;
 
             return CreatedAtAction("GetInscription", new { id = inscription.IncriptionId }, inscription);
         }
-        
+
+
         [HttpGet("all")]
         public async Task<ActionResult<IEnumerable<InscriptionWithNames>>> GetInscriptionsWithNames(int pageNumber = 1, int pageSize = 10, string sortOrder = "", string sortBy = "", string searchString = "")
         {
