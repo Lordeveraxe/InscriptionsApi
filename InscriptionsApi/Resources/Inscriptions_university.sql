@@ -31,3 +31,12 @@ alter table Inscriptions add PRIMARY KEY (incription_id);
 
 alter table Inscriptions add FOREIGN KEY (student_id) REFERENCES Students(student_id);
 alter table Inscriptions add FOREIGN KEY (subject_id) REFERENCES Subjects(subject_id);
+
+SELECT CONVERT(datetime, incription_date) as incription_date
+FROM Inscriptions;
+
+ALTER TABLE Inscriptions 
+ALTER COLUMN incription_date datetime NOT NULL;
+
+ALTER TABLE Student 
+ADD student_photo VARCHAR(255);
