@@ -19,5 +19,7 @@ public partial class Student
 
     public string StudentGenre { get; set; } = null!;
 
+    public string? StudentPhoto { get; set; }
+
     public virtual ICollection<Inscription> Inscriptions { get; } = new List<Inscription>();
 }

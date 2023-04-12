@@ -25,11 +25,11 @@ public partial class InscriptionsUniversityContext : DbContext
     {
         modelBuilder.Entity<Inscription>(entity =>
         {
-            entity.HasKey(e => e.IncriptionId).HasName("PK__Inscript__F00DD83E4FC8C55F");
+            entity.HasKey(e => e.IncriptionId).HasName("PK__Inscript__F00DD83EA5FF4E37");
 
             entity.Property(e => e.IncriptionId).HasColumnName("incription_id");
             entity.Property(e => e.IncriptionDate)
-                .HasColumnType("smalldatetime")
+                .HasColumnType("datetime")
                 .HasColumnName("incription_date");
             entity.Property(e => e.StudentId).HasColumnName("student_id");
             entity.Property(e => e.SubjectId).HasColumnName("subject_id");
@@ -47,7 +47,7 @@ public partial class InscriptionsUniversityContext : DbContext
 
         modelBuilder.Entity<Student>(entity =>
         {
-            entity.HasKey(e => e.StudentId).HasName("PK__Students__2A33069A970B06CC");
+            entity.HasKey(e => e.StudentId).HasName("PK__Students__2A33069A6AD7EE57");
 
             entity.Property(e => e.StudentId).HasColumnName("student_id");
             entity.Property(e => e.StudentDoc)
@@ -66,6 +66,10 @@ public partial class InscriptionsUniversityContext : DbContext
                 .HasMaxLength(100)
                 .IsUnicode(false)
                 .HasColumnName("student_name");
+            entity.Property(e => e.StudentPhoto)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("student_photo");
             entity.Property(e => e.StudentStatus).HasColumnName("student_status");
             entity.Property(e => e.TypeDocStudent)
                 .HasMaxLength(50)
@@ -75,7 +79,7 @@ public partial class InscriptionsUniversityContext : DbContext
 
         modelBuilder.Entity<Subject>(entity =>
         {
-            entity.HasKey(e => e.SubjectId).HasName("PK__Subjects__5004F66050DB088D");
+            entity.HasKey(e => e.SubjectId).HasName("PK__Subjects__5004F6605C22DA83");
 
             entity.Property(e => e.SubjectId).HasColumnName("subject_id");
             entity.Property(e => e.SubjectCapacity).HasColumnName("subject_capacity");

@@ -38,5 +38,5 @@ FROM Inscriptions;
 ALTER TABLE Inscriptions 
 ALTER COLUMN incription_date datetime NOT NULL;
 
-ALTER TABLE Student 
+ALTER TABLE Students 
 ADD student_photo VARCHAR(255);
