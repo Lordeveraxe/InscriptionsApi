@@ -79,8 +79,11 @@ namespace InscriptionsApi.Controllers
                     return NoContent();
                 }*/
         [HttpPut("{id}")]
-        public async Task<IActionResult> Put(int id, int studentId, string subjectName)
+        public async Task<IActionResult> Put(int id, InscriptionData inscriptionData )
         {
+            int studentId = inscriptionData.StudentId;
+            string subjectName = inscriptionData.SubjectName;
+
             var inscription = await _context.Inscriptions.FindAsync(id);
             if (inscription == null)
             {
@@ -140,8 +143,10 @@ namespace InscriptionsApi.Controllers
               return CreatedAtAction("GetInscription", new { id = inscription.IncriptionId }, inscription);
           }*/
         [HttpPost]
-        public async Task<ActionResult<InscriptionPostDTO>> PostInscription(int studentId, string subjectName)
+        public async Task<ActionResult<InscriptionPostDTO>> PostInscription(InscriptionData inscriptionDta)
         {
+            int studentId = inscriptionDta.StudentId;
+            string subjectName = inscriptionDta.SubjectName;
             var subject = await _context.Subjects.FirstOrDefaultAsync(s => s.SubjectName == subjectName);
             if (subject == null)
             {
