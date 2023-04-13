@@ -6,6 +6,9 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using InscriptionsApiLocal.Models;
+using System.Net;
+using Azure.Storage.Blobs;
+using Microsoft.WindowsAzure.Storage;
 
 namespace lab2_Distribuidos.Controllers
 {
@@ -180,7 +183,44 @@ namespace lab2_Distribuidos.Controllers
             }
             _context.Students.Add(student);
             await _context.SaveChangesAsync();
+            return CreatedAtAction("GetStudent", new { id = student.StudentId }, student);
+        }
 
+        [HttpPost("/url")]
+        public async Task<ActionResult<Student>> PostStudentWithAzureUrl(String imageUrl, Student student)
+        {
+            var connectionString = "DefaultEndpointsProtocol=https;AccountName=almacenamientoproyecto;AccountKey=zf7dlxol6nNl/jyebJKGRQCXqidHqXExsjdZGRAWv1n/dYw821iiogfd/gCX4spdZ0aekPMHVaFJ+AStnuWvZQ==;EndpointSuffix=core.windows.net";
+
+            var storageAccount = CloudStorageAccount.Parse(connectionString);
+            var blobClient = storageAccount.CreateCloudBlobClient();
+
+            var containerName = "fotosestudiantes";
+            var container = blobClient.GetContainerReference(containerName);
+
+            var blobName = student.StudentId + student.StudentDoc + ".jpg";
+            var blob = container.GetBlockBlobReference(blobName);
+            var memoryStream = new MemoryStream();
+
+            using (var webClient = new WebClient())
+            {
+                using (var stream = webClient.OpenRead(imageUrl))
+                {
+                    // Crea un nuevo objeto de tipo MemoryStream a partir del Stream
+                    stream.CopyTo(memoryStream);
+                    memoryStream.Seek(0, SeekOrigin.Begin);
+
+                    // Aquí puedes hacer cualquier otra operación necesaria con el objeto MemoryStream antes de subirlo a Azure Blob
+                }
+            }
+
+            await blob.UploadFromStreamAsync(memoryStream);
+            student.StudentPhoto = blob.Uri.ToString();
+            if (_context.Students == null)
+            {
+                return Problem("Entity set 'InscriptionsUniversityContext.Students'  is null.");
+            }
+            _context.Students.Add(student);
+            await _context.SaveChangesAsync();
             return CreatedAtAction("GetStudent", new { id = student.StudentId }, student);
         }
 
