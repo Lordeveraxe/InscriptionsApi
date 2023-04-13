@@ -187,8 +187,9 @@ namespace lab2_Distribuidos.Controllers
         }
 
         [HttpPost("/url")]
-        public async Task<ActionResult<Student>> PostStudentWithAzureUrl(String imageUrl, Student student)
+        public async Task<ActionResult<Student>> PostStudentWithAzureUrl(Student student)
         {
+            String imageUrl = student.StudentPhoto;
             var connectionString = "DefaultEndpointsProtocol=https;AccountName=almacenamientoproyecto;AccountKey=zf7dlxol6nNl/jyebJKGRQCXqidHqXExsjdZGRAWv1n/dYw821iiogfd/gCX4spdZ0aekPMHVaFJ+AStnuWvZQ==;EndpointSuffix=core.windows.net";
 
             var storageAccount = CloudStorageAccount.Parse(connectionString);
