@@ -198,7 +198,7 @@ namespace lab2_Distribuidos.Controllers
             var containerName = "fotosestudiantes";
             var container = blobClient.GetContainerReference(containerName);
 
-            var blobName = student.StudentId + student.StudentDoc + ".jpg";
+            var blobName = student.StudentName + student.StudentDoc + ".jpg";
             var blob = container.GetBlockBlobReference(blobName);
             var memoryStream = new MemoryStream();
 
