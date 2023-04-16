@@ -173,49 +173,33 @@ namespace lab2_Distribuidos.Controllers
 
             return NoContent();
         }
-
-        [HttpPost]
-        public async Task<ActionResult<Student>> PostStudent(Student student)
+        
+        [HttpPost("uploadImage")]
+        public async Task<IActionResult> PostPhotoOnAzure(IFormFile file)
         {
-            if (_context.Students == null)
-            {
-                return Problem("Entity set 'InscriptionsUniversityContext.Students'  is null.");
-            }
-            _context.Students.Add(student);
-            await _context.SaveChangesAsync();
-            return CreatedAtAction("GetStudent", new { id = student.StudentId }, student);
-        }
-
-        [HttpPost("/url")]
-        public async Task<ActionResult<Student>> PostStudentWithAzureUrl(Student student)
-        {
-            String imageUrl = student.StudentPhoto;
             var connectionString = "DefaultEndpointsProtocol=https;AccountName=almacenamientoproyecto;AccountKey=zf7dlxol6nNl/jyebJKGRQCXqidHqXExsjdZGRAWv1n/dYw821iiogfd/gCX4spdZ0aekPMHVaFJ+AStnuWvZQ==;EndpointSuffix=core.windows.net";
-
             var storageAccount = CloudStorageAccount.Parse(connectionString);
             var blobClient = storageAccount.CreateCloudBlobClient();
-
             var containerName = "fotosestudiantes";
             var container = blobClient.GetContainerReference(containerName);
-
-            var blobName = student.StudentName + student.StudentDoc + ".jpg";
+            var blobName = file.FileName;
             var blob = container.GetBlockBlobReference(blobName);
             var memoryStream = new MemoryStream();
-
-            using (var webClient = new WebClient())
+            using (var stream = file.OpenReadStream())
             {
-                using (var stream = webClient.OpenRead(imageUrl))
-                {
-                    // Crea un nuevo objeto de tipo MemoryStream a partir del Stream
-                    stream.CopyTo(memoryStream);
-                    memoryStream.Seek(0, SeekOrigin.Begin);
-
-                    // Aquí puedes hacer cualquier otra operación necesaria con el objeto MemoryStream antes de subirlo a Azure Blob
-                }
+                stream.CopyTo(memoryStream);
+                memoryStream.Seek(0, SeekOrigin.Begin);
             }
-
             await blob.UploadFromStreamAsync(memoryStream);
-            student.StudentPhoto = blob.Uri.ToString();
+            var blobUrl = blob.Uri.ToString();
+            Console.WriteLine("Este es la ruta en azure:" + blobUrl);
+            return Ok(new { blobUrl });
+        }
+
+        [HttpPost("url")]
+        public async Task<ActionResult<Student>> PostStudentWithPhoto(Student student)
+        {
+            Console.WriteLine("esta es la ruta de la ruta en el estudiante: "+student.StudentPhoto);
             if (_context.Students == null)
             {
                 return Problem("Entity set 'InscriptionsUniversityContext.Students'  is null.");
