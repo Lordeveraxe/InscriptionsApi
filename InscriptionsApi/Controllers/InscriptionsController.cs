@@ -296,24 +296,23 @@ namespace InscriptionsApi.Controllers
        
 
         [HttpGet("details/{id}")]
-        public async Task<ActionResult<InscriptionWithNames>> GetInscriptionWithNames(int id)
+        public async Task<ActionResult<InscriptionGetIdDTO>> GetInscriptionWithNames(int id)
         {
             var inscription = await _context.Inscriptions
-                .Include(i => i.Student)
-                .Include(i => i.Subject)
-                .FirstOrDefaultAsync(i => i.IncriptionId == id);
+               .Include(i => i.Student)
+               .Include(i => i.Subject)
+               .FirstOrDefaultAsync(i => i.IncriptionId == id);
 
             if (inscription == null)
             {
                 return NotFound();
             }
 
-            var inscriptionWithNames = new InscriptionWithNames
+            var inscriptionWithNames = new InscriptionGetIdDTO
             {
                 IncriptionId = inscription.IncriptionId,
-                StudentName = inscription.Student.StudentName,
-                SubjectName = inscription.Subject.SubjectName,
-                IncriptionDate = inscription.IncriptionDate
+                StudentId = inscription.Student.StudentId,
+                SubjectName = inscription.Subject.SubjectName
             };
 
             return inscriptionWithNames;
