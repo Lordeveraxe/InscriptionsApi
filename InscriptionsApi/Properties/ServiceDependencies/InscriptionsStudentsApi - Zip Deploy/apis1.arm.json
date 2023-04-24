@@ -101,7 +101,7 @@
                 "apiRevision": "1",
                 "description": null,
                 "subscriptionRequired": false,
-                "serviceUrl": "https://inscriptionsapiuptc.azurewebsites.net",
+                "serviceUrl": "https://inscriptionssubjectapi.azurewebsites.net",
                 "path": "",
                 "protocols": [
                   "https"

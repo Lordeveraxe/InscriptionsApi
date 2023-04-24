@@ -177,7 +177,7 @@ namespace lab2_Distribuidos.Controllers
         [HttpPost("uploadImage")]
         public async Task<IActionResult> PostPhotoOnAzure(IFormFile file)
         {
-            var connectionString = "DefaultEndpointsProtocol=https;AccountName=almacenamientoproyectos;AccountKey=qQUh9l5ZU+DzXYahddVMbFUAXU5V4JywzUglvP8A79UK5vlyDd5H8Vt/UCTNPO+yXQIlZLhAfD99+AStI5U2Jg==;EndpointSuffix=core.windows.net\r\n\r\n";
+            var connectionString = "DefaultEndpointsProtocol=https;AccountName=almacenamientoproyectos;AccountKey=qQUh9l5ZU+DzXYahddVMbFUAXU5V4JywzUglvP8A79UK5vlyDd5H8Vt/UCTNPO+yXQIlZLhAfD99+AStI5U2Jg==;EndpointSuffix=core.windows.net";
             var storageAccount = CloudStorageAccount.Parse(connectionString);
             var blobClient = storageAccount.CreateCloudBlobClient();
             var containerName = "fotosestudiantes";

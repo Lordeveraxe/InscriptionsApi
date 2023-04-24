@@ -4,7 +4,7 @@
   "parameters": {
     "resourceGroupName": {
       "type": "string",
-      "defaultValue": "cloud-shell-storage-southcentralus",
+      "defaultValue": "sistemasdistribuidos",
       "metadata": {
         "_parameterType": "resourceGroup",
         "description": "Nombre del grupo de recursos del recurso. Se recomienda poner los recursos en el mismo grupo de recursos para mejorar el seguimiento."
@@ -12,7 +12,7 @@
     },
     "resourceGroupLocation": {
       "type": "string",
-      "defaultValue": "southcentralus",
+      "defaultValue": "eastus",
       "metadata": {
         "_parameterType": "location",
         "description": "Ubicación del grupo de recursos. Los grupos de recursos podrían tener una ubicación distinta a la de los recursos."
@@ -49,17 +49,17 @@
           "contentVersion": "1.0.0.0",
           "resources": [
             {
-              "name": "InscriptionsApi",
+              "name": "InscriptionsMng",
               "type": "Microsoft.ApiManagement/service",
               "location": "[parameters('resourceLocation')]",
               "properties": {
-                "publisherEmail": "santiago.torresojeda@hotmail.com",
-                "publisherName": "DistTeam",
+                "publisherEmail": "Jmsb-03@outlook.es",
+                "publisherName": "José Salamanca",
                 "notificationSenderEmail": "apimgmt-noreply@mail.windowsazure.com",
                 "hostnameConfigurations": [
                   {
                     "type": "Proxy",
-                    "hostName": "inscriptionsapi.azure-api.net",
+                    "hostName": "inscriptionsmng.azure-api.net",
                     "encodedCertificate": null,
                     "keyVaultId": null,
                     "certificatePassword": null,
@@ -95,13 +95,13 @@
             },
             {
               "type": "Microsoft.ApiManagement/service/apis",
-              "name": "InscriptionsApi/InscriptionsApi",
+              "name": "InscriptionsMng/InscriptionsApi",
               "properties": {
-                "displayName": "InscriptionsApi",
+                "displayName": "InscriptionsApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
                 "apiRevision": "1",
                 "description": null,
-                "subscriptionRequired": true,
-                "serviceUrl": null,
+                "subscriptionRequired": false,
+                "serviceUrl": "https://inscriptionsapiuptc.azurewebsites.net",
                 "path": "",
                 "protocols": [
                   "https"
@@ -118,7 +118,7 @@
               },
               "apiVersion": "2019-12-01",
               "dependsOn": [
-                "InscriptionsApi"
+                "InscriptionsMng"
               ]
             }
           ]
