@@ -8,6 +8,7 @@ using Microsoft.EntityFrameworkCore;
 using InscriptionsApiLocal.Models;
 using InscriptionsApi.Controllers.DTO;
 using System.Globalization;
+using Microsoft.AspNetCore.Authorization;
 
 namespace InscriptionsApi.Controllers
 {
@@ -24,6 +25,7 @@ namespace InscriptionsApi.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Inscription>>> GetInscriptions()
         {
             if (_context.Inscriptions == null)
@@ -34,6 +36,7 @@ namespace InscriptionsApi.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Inscription>> GetInscription(int id)
         {
             if (_context.Inscriptions == null)
@@ -79,6 +82,7 @@ namespace InscriptionsApi.Controllers
                     return NoContent();
                 }*/
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> Put(int id, InscriptionData inscriptionData )
         {
             int studentId = inscriptionData.StudentId;
@@ -143,6 +147,7 @@ namespace InscriptionsApi.Controllers
               return CreatedAtAction("GetInscription", new { id = inscription.IncriptionId }, inscription);
           }*/
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<InscriptionPostDTO>> PostInscription(InscriptionData inscriptionDta)
         {
             int studentId = inscriptionDta.StudentId;
@@ -181,6 +186,7 @@ namespace InscriptionsApi.Controllers
 
 
         [HttpGet("all")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<InscriptionWithNames>>> GetInscriptionsWithNames(int pageNumber = 1, int pageSize = 10, string sortOrder = "", string sortBy = "", string searchString = "")
         {
             
@@ -296,6 +302,7 @@ namespace InscriptionsApi.Controllers
        
 
         [HttpGet("details/{id}")]
+        [Authorize]
         public async Task<ActionResult<InscriptionGetIdDTO>> GetInscriptionWithNames(int id)
         {
             var inscription = await _context.Inscriptions

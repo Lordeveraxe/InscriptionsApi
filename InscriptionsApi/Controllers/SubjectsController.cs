@@ -4,6 +4,7 @@ using System.Linq;
 using System.Net;
 using System.Threading.Tasks;
 using InscriptionsApiLocal.Models;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -14,6 +15,7 @@ namespace ApiMaterias.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+   // [Authorize]
     public class SubjectsController : ControllerBase
     {
         private readonly InscriptionsUniversityContext _context;
@@ -26,6 +28,7 @@ namespace ApiMaterias.Controllers
 
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Subject>>> GetSubjects()
         {
             if (_context.Subjects == null)
@@ -37,6 +40,7 @@ namespace ApiMaterias.Controllers
         }
 
         [HttpGet("withSorts")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Subject>>> GetSubjectsWithFilters(string sortBy = "Id", string sortOrder = "asc", int page = 1, int pageSize = 10)
         {
             if (_context.Subjects == null)
@@ -84,6 +88,7 @@ namespace ApiMaterias.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Subject>> GetSubject(int id)
         {
           if (_context.Subjects == null)
@@ -102,6 +107,7 @@ namespace ApiMaterias.Controllers
 
         
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutSubject(int id, Subject subject)
         {
             if (id != subject.SubjectId)
@@ -132,6 +138,7 @@ namespace ApiMaterias.Controllers
 
         
         [HttpPost]
+        [Authorize]
         public async Task<ActionResult<Subject>> PostSubject(Subject subject)
         {
           if (_context.Subjects == null)
@@ -146,6 +153,7 @@ namespace ApiMaterias.Controllers
 
 
         [HttpPatch("{id}/state")]
+        [Authorize]
         public async Task<IActionResult> ChangeStatusSubject(int id, int state)
         {
             var subject = await _context.Subjects.FindAsync(id);
