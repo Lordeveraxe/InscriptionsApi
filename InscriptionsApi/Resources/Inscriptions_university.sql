@@ -40,3 +40,23 @@ ALTER COLUMN incription_date datetime NOT NULL;
 
 ALTER TABLE Students 
 ADD student_photo VARCHAR(255);
+
+Create table Users(
+user_id int NOT NULL IDENTITY(1,1) ,
+user_name varchar(50) NOT NULL,
+user_email varchar(50) NOT NULL,
+user_state int NOT NULL CHECK(user_state IN('0','1'))
+);
+
+Create table Credentials(
+user_id int NOT NULL,
+user_password varchar(250) NOT NULL,
+credential_salt varchar(255) NOT NULL
+);
+
+alter table Users add PRIMARY KEY (user_id);
+alter table Credentials add PRIMARY KEY (user_id);
+alter table Credentials add FOREIGN KEY (user_id) REFERENCES Users(user_id);
+
+ALTER TABLE Users
+ADD CONSTRAINT UserNameUnique UNIQUE (user_name);

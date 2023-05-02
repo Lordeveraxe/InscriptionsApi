@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using InscriptionsApi.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace InscriptionsApiLocal.Models;
@@ -14,6 +15,7 @@ public partial class InscriptionsUniversityContext : DbContext
         : base(options)
     {
     }
+    public virtual DbSet<Credential> Credentials { get; set; }
 
     public virtual DbSet<Inscription> Inscriptions { get; set; }
 
@@ -21,8 +23,32 @@ public partial class InscriptionsUniversityContext : DbContext
 
     public virtual DbSet<Subject> Subjects { get; set; }
 
+    public virtual DbSet<User> Users { get; set; }
+
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
+        modelBuilder.Entity<Credential>(entity =>
+        {
+            entity.HasKey(e => e.UserId).HasName("PK__Credenti__B9BE370F4283B2B9");
+
+            entity.Property(e => e.UserId)
+                .ValueGeneratedNever()
+                .HasColumnName("user_id");
+            entity.Property(e => e.CredentialSalt)
+                .HasMaxLength(255)
+                .IsUnicode(false)
+                .HasColumnName("credential_salt");
+            entity.Property(e => e.UserPassword)
+                .HasMaxLength(250)
+                .IsUnicode(false)
+                .HasColumnName("user_password");
+
+            entity.HasOne(d => d.User).WithOne(p => p.Credential)
+                .HasForeignKey<Credential>(d => d.UserId)
+                .OnDelete(DeleteBehavior.ClientSetNull)
+                .HasConstraintName("FK__Credentia__user___4F7CD00D");
+        });
+
         modelBuilder.Entity<Inscription>(entity =>
         {
             entity.HasKey(e => e.IncriptionId).HasName("PK__Inscript__F00DD83EA5FF4E37");
@@ -88,6 +114,24 @@ public partial class InscriptionsUniversityContext : DbContext
                 .IsUnicode(false)
                 .HasColumnName("subject_name");
             entity.Property(e => e.SubjectStatus).HasColumnName("subject_status");
+        });
+
+        modelBuilder.Entity<User>(entity =>
+        {
+            entity.HasKey(e => e.UserId).HasName("PK__Users__B9BE370FD67A12EA");
+
+            entity.HasIndex(e => e.UserName, "uc_Users").IsUnique();
+
+            entity.Property(e => e.UserId).HasColumnName("user_id");
+            entity.Property(e => e.UserEmail)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("user_email");
+            entity.Property(e => e.UserName)
+                .HasMaxLength(50)
+                .IsUnicode(false)
+                .HasColumnName("user_name");
+            entity.Property(e => e.UserState).HasColumnName("user_state");
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -9,6 +9,7 @@ using InscriptionsApiLocal.Models;
 using System.Net;
 using Azure.Storage.Blobs;
 using Microsoft.WindowsAzure.Storage;
+using Microsoft.AspNetCore.Authorization;
 
 namespace lab2_Distribuidos.Controllers
 {
@@ -25,6 +26,7 @@ namespace lab2_Distribuidos.Controllers
         }
 
         [HttpGet]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudents()
         {
             if (_context.Students == null)
@@ -35,6 +37,7 @@ namespace lab2_Distribuidos.Controllers
         }
 
         [HttpGet("withSorts")]
+        [Authorize]
         public async Task<ActionResult<IEnumerable<Student>>> GetStudents(int pageNumber = 1, int pageSize = 10, string sortOrder = "", string sortBy = "", string searchString = "")
         {
             var studentsQuery = _context.Students.AsQueryable();
@@ -129,6 +132,7 @@ namespace lab2_Distribuidos.Controllers
         }
 
         [HttpGet("{id}")]
+        [Authorize]
         public async Task<ActionResult<Student>> GetStudent(int id)
         {
             if (_context.Students == null)
@@ -146,6 +150,7 @@ namespace lab2_Distribuidos.Controllers
         }
 
         [HttpPut("{id}")]
+        [Authorize]
         public async Task<IActionResult> PutStudent(int id, Student student)
         {
             if (id != student.StudentId)
@@ -175,6 +180,7 @@ namespace lab2_Distribuidos.Controllers
         }
         
         [HttpPost("uploadImage")]
+        [Authorize]
         public async Task<IActionResult> PostPhotoOnAzure(IFormFile file)
         {
             var connectionString = "DefaultEndpointsProtocol=https;AccountName=almacenamientoproyectos;AccountKey=qQUh9l5ZU+DzXYahddVMbFUAXU5V4JywzUglvP8A79UK5vlyDd5H8Vt/UCTNPO+yXQIlZLhAfD99+AStI5U2Jg==;EndpointSuffix=core.windows.net";
@@ -197,6 +203,7 @@ namespace lab2_Distribuidos.Controllers
         }
 
         [HttpPost("url")]
+        [Authorize]
         public async Task<ActionResult<Student>> PostStudentWithPhoto(Student student)
         {
             Console.WriteLine("esta es la ruta de la ruta en el estudiante: "+student.StudentPhoto);
@@ -210,6 +217,7 @@ namespace lab2_Distribuidos.Controllers
         }
 
         [HttpPatch("{id}/state")]
+        [Authorize]
         public async Task<IActionResult> ChangeStatusStudent(int id, int state)
         {
             var student = await _context.Students.FindAsync(id);
