@@ -1,5 +1,7 @@
+using InscriptionsApi.Controllers;
 using InscriptionsApiLocal.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -63,6 +65,14 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+builder.Services.AddAuthorization(options =>
+{
+    options.DefaultPolicy = new AuthorizationPolicyBuilder(JwtBearerDefaults.AuthenticationScheme)
+        .RequireAuthenticatedUser()
+        .Build();
+});
+builder.Services.AddControllers();
 var app = builder.Build();
 app.UseCors(x => x
             .AllowAnyOrigin()
@@ -83,6 +93,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseAuthentication();
+app.UseMiddleware<JwtAuthorizeAttribute>();
+
 
 app.UseAuthorization();
 

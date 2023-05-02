@@ -86,6 +86,7 @@ namespace InscriptionsApi.Controllers
         }
 
         [HttpGet("ObtenerToken/{passwordUser}")]
+        [AllowAnonymous]
         public async Task<ActionResult<FormatToken>> AuthenticationGetToken(String name, String passwordUser)
         {
             if (_context.Users == null)
