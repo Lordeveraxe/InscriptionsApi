@@ -115,8 +115,14 @@ namespace InscriptionsApi.Controllers
             {
                 return Forbid();
             }
-          
-            var jwt = _configuration.GetSection("Jwt").Get<JwtProperties>();
+
+            var jwt = new JwtData
+            {
+                Key = Environment.GetEnvironmentVariable("Jwt_Key"),
+                Issuer = Environment.GetEnvironmentVariable("Jwt_Issuer"),
+                Audience = Environment.GetEnvironmentVariable("Jwt_Audience"),
+                Subject = Environment.GetEnvironmentVariable("Jwt_Subject")
+            };
             var claims = new[]
             {
                 new Claim(System.IdentityModel.Tokens.Jwt.JwtRegisteredClaimNames.Sub, jwt.Subject),
