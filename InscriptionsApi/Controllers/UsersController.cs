@@ -20,6 +20,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Configuration;
 using Microsoft.AspNetCore.SignalR;
 using Microsoft.AspNetCore.Authorization;
+using System.ComponentModel.DataAnnotations;
 
 namespace InscriptionsApi.Controllers
 {
@@ -40,10 +41,10 @@ namespace InscriptionsApi.Controllers
         [Authorize]
         public async Task<ActionResult<IEnumerable<User>>> GetUsers()
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
             return await _context.Users.ToListAsync();
         }
 
@@ -70,13 +71,13 @@ namespace InscriptionsApi.Controllers
         [Authorize]
         public async Task<ActionResult<User>> GetUserName(String name)
         {
-          if (_context.Users == null)
-          {
-              return NotFound();
-          }
-            var user =  _context.Users.FirstOrDefault(i => i.UserName == name);
+            if (_context.Users == null)
+            {
+                return NotFound();
+            }
+            var user = _context.Users.FirstOrDefault(i => i.UserName == name);
 
-        
+
             if (user == null)
             {
                 return NotFound();
@@ -85,9 +86,9 @@ namespace InscriptionsApi.Controllers
             return user;
         }
 
-        [HttpGet("ObtenerToken/{passwordUser}")]
+        [HttpGet("ObtenerToken/{name},{passwordUser}")]
         [AllowAnonymous]
-        public async Task<ActionResult<FormatToken>> AuthenticationGetToken(String name, String passwordUser)
+        public async Task<ActionResult<FormatToken>> AuthenticationGetToken(String name, [DataType(DataType.Password)] string passwordUser)
         {
             if (_context.Users == null)
             {
@@ -139,25 +140,26 @@ namespace InscriptionsApi.Controllers
                 jwt.Issuer,
                 jwt.Audience,
                 claims,
-                expires: DateTime.Now.AddMinutes(1),
+                expires: DateTime.Now.AddMinutes(5),
                 signingCredentials: singIn
-                ) ;
+                );
             var report = new FormatToken()
             {
                 succes = true,
                 message = "exito",
                 token = new JwtSecurityTokenHandler().WriteToken(token)
             };
-         return report;
+            return report;
         }
 
-      
+
         [HttpPut("EditarDatos/{id}")]
         [Authorize]
         public async Task<IActionResult> PutUser(int id, PutUserDataDTO userDTO)
         {
             var credential = _context.Credentials.FirstOrDefault(i => i.UserId == id);
-            if (credential == null) {
+            if (credential == null)
+            {
                 return Unauthorized();
             }
             var hash = HashEncryption.CheckHash(userDTO.PreviousPassword, credential.UserPassword, credential.CredentialSalt);
@@ -168,9 +170,9 @@ namespace InscriptionsApi.Controllers
 
             var user = _context.Users.FirstOrDefault(i => i.UserId == id);
             user.UserName = userDTO.UserName;
-            user.UserEmail= userDTO.UserEmail;
+            user.UserEmail = userDTO.UserEmail;
             user.UserState = userDTO.UserState;
- 
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -207,9 +209,9 @@ namespace InscriptionsApi.Controllers
             HashedFormat hashNewPassword = HashEncryption.Hash(userDTO.NewPassword);
 
             credential.UserPassword = hashNewPassword.Password;
-           credential.CredentialSalt = hashNewPassword.HashAlgorithm;
-                
-           
+            credential.CredentialSalt = hashNewPassword.HashAlgorithm;
+
+
             try
             {
                 await _context.SaveChangesAsync();
@@ -234,9 +236,9 @@ namespace InscriptionsApi.Controllers
             var user = new User()
             {
                 UserName = userDTO.UserName,
-                UserEmail= userDTO.UserEmail,
+                UserEmail = userDTO.UserEmail,
                 UserState = userDTO.UserState,
-         
+
             };
             if (_context.Users == null)
             {
@@ -247,44 +249,44 @@ namespace InscriptionsApi.Controllers
             await _context.SaveChangesAsync();
 
             User userAux = _context.Users.
-                FirstOrDefault(i => i.UserName == userDTO.UserName); 
+                FirstOrDefault(i => i.UserName == userDTO.UserName);
 
             HashedFormat hash = HashEncryption.Hash(userDTO.UserPassword);
-  
+
             var credential = new Credential()
             {
                 UserId = userAux.UserId,
                 UserPassword = hash.Password,
                 CredentialSalt = hash.HashAlgorithm
             };
-            
+
 
             _context.Credentials.Add(credential);
-   
+
             await _context.SaveChangesAsync();
-          
+
             return CreatedAtAction("GetUser", new { id = user.UserId }, user);
         }
 
         // DELETE: api/Users/5
-     /*   [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteUser(int id)
-        {
-            if (_context.Users == null)
-            {
-                return NotFound();
-            }
-            var user = await _context.Users.FindAsync(id);
-            if (user == null)
-            {
-                return NotFound();
-            }
+        /*   [HttpDelete("{id}")]
+           public async Task<IActionResult> DeleteUser(int id)
+           {
+               if (_context.Users == null)
+               {
+                   return NotFound();
+               }
+               var user = await _context.Users.FindAsync(id);
+               if (user == null)
+               {
+                   return NotFound();
+               }
 
-            _context.Users.Remove(user);
-            await _context.SaveChangesAsync();
+               _context.Users.Remove(user);
+               await _context.SaveChangesAsync();
 
-            return NoContent();
-        }*/
+               return NoContent();
+           }*/
 
         private bool UserExists(int id)
         {
