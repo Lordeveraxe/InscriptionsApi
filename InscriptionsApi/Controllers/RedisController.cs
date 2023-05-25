@@ -41,20 +41,20 @@ namespace InscriptionsApi.Controllers
             var redisDatabase = _redisConnection.GetDatabase();
             redisDatabase.StringSet(key, value);
 
-            return Ok();
+            return CreatedAtAction(nameof(Get), new { key = key }, value);
         }
 
 
-        /*[HttpPut("{key}")]
-        public IActionResult PutWithTime(string key, string value, string time)
+        [HttpPut("{key},{value}")]
+        public IActionResult PutWithTime(string key, string value, int time = 1)
         {
             // Almacena el valor en Redis con la clave especificada
             var redisDatabase = _redisConnection.GetDatabase();
 
-            TimeSpan tiempoExpiracion = TimeSpan.FromMinutes(Int32.Parse(time));
+            TimeSpan tiempoExpiracion = TimeSpan.FromMinutes(time);
             redisDatabase.StringSet(key, value, tiempoExpiracion);
 
-            return Ok();
-        }*/
+            return CreatedAtAction(nameof(Get), new { key = key}, new { Value = value, Time = time });
+        }
     }
 }
