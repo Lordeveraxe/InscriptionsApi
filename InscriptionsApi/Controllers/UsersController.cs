@@ -228,7 +228,6 @@ namespace InscriptionsApi.Controllers
             return NoContent();
         }
         [HttpPost]
-        [Authorize]
         public async Task<ActionResult<User>> PostUser(PostUserDTO userDTO)
         {
             var user = new User()
