@@ -37,7 +37,7 @@ namespace lab2_Distribuidos.Controllers
         }
 
         [HttpGet("withSorts")]
-        [Authorize]
+  
         public async Task<ActionResult<IEnumerable<Student>>> GetStudents(int pageNumber = 1, int pageSize = 10, string sortOrder = "", string sortBy = "", string searchString = "")
         {
             var studentsQuery = _context.Students.AsQueryable();

@@ -186,7 +186,7 @@ namespace InscriptionsApi.Controllers
 
 
         [HttpGet("all")]
-        [Authorize]
+
         public async Task<ActionResult<IEnumerable<InscriptionWithNames>>> GetInscriptionsWithNames(int pageNumber = 1, int pageSize = 10, string sortOrder = "", string sortBy = "", string searchString = "")
         {
             
