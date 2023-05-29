@@ -140,7 +140,7 @@ namespace InscriptionsApi.Controllers
                 jwt.Issuer,
                 jwt.Audience,
                 claims,
-                expires: DateTime.Now.AddMinutes(5),
+                expires: DateTime.Now.AddMinutes(30),
                 signingCredentials: singIn
                 );
             var report = new FormatToken()

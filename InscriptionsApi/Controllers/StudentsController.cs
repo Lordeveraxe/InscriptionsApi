@@ -183,12 +183,12 @@ namespace lab2_Distribuidos.Controllers
         [Authorize]
         public async Task<IActionResult> PostPhotoOnAzure(IFormFile file)
         {
-            var connectionString = "DefaultEndpointsProtocol=https;AccountName=almacenamientoproyectos;AccountKey=qQUh9l5ZU+DzXYahddVMbFUAXU5V4JywzUglvP8A79UK5vlyDd5H8Vt/UCTNPO+yXQIlZLhAfD99+AStI5U2Jg==;EndpointSuffix=core.windows.net";
+            var connectionString = "DefaultEndpointsProtocol=https;AccountName=uptcstudents;AccountKey=huRGM996Af3uC3fR6EkKBt6tIEZYDiE+cIsGWd7Ls+jN/VMJsYUFQ8yhOJxBr6vVHYXAJs7A+JQC+ASt01litQ==;EndpointSuffix=core.windows.net";
             var storageAccount = CloudStorageAccount.Parse(connectionString);
             var blobClient = storageAccount.CreateCloudBlobClient();
             var containerName = "fotosestudiantes";
             var container = blobClient.GetContainerReference(containerName);
-            var blobName = file.FileName;
+            var blobName = file.FileName.Replace(" ","_");
             var blob = container.GetBlockBlobReference(blobName);
             var memoryStream = new MemoryStream();
             using (var stream = file.OpenReadStream())

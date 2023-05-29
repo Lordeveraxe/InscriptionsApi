@@ -4,7 +4,7 @@
   "parameters": {
     "resourceGroupName": {
       "type": "string",
-      "defaultValue": "sistemasdistribuidos",
+      "defaultValue": "inscriptions",
       "metadata": {
         "_parameterType": "resourceGroup",
         "description": "Nombre del grupo de recursos del recurso. Se recomienda poner los recursos en el mismo grupo de recursos para mejorar el seguimiento."
@@ -49,17 +49,17 @@
           "contentVersion": "1.0.0.0",
           "resources": [
             {
-              "name": "InscriptionsMng",
+              "name": "InscriptionsApiMng",
               "type": "Microsoft.ApiManagement/service",
               "location": "[parameters('resourceLocation')]",
               "properties": {
-                "publisherEmail": "Jmsb-03@outlook.es",
-                "publisherName": "José Salamanca",
+                "publisherEmail": "daniela.torresj@hotmail.com",
+                "publisherName": "Daniela Torres",
                 "notificationSenderEmail": "apimgmt-noreply@mail.windowsazure.com",
                 "hostnameConfigurations": [
                   {
                     "type": "Proxy",
-                    "hostName": "inscriptionsmng.azure-api.net",
+                    "hostName": "inscriptionsapimng.azure-api.net",
                     "encodedCertificate": null,
                     "keyVaultId": null,
                     "certificatePassword": null,
@@ -95,13 +95,13 @@
             },
             {
               "type": "Microsoft.ApiManagement/service/apis",
-              "name": "InscriptionsMng/InscriptionsApi",
+              "name": "InscriptionsApiMng/InscriptionsApi",
               "properties": {
-                "displayName": "InscriptionsApi, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null",
+                "displayName": "InscriptionsApi",
                 "apiRevision": "1",
                 "description": null,
-                "subscriptionRequired": false,
-                "serviceUrl": "https://inscriptionssubjectapi.azurewebsites.net",
+                "subscriptionRequired": true,
+                "serviceUrl": null,
                 "path": "",
                 "protocols": [
                   "https"
@@ -118,7 +118,7 @@
               },
               "apiVersion": "2019-12-01",
               "dependsOn": [
-                "InscriptionsMng"
+                "InscriptionsApiMng"
               ]
             }
           ]
