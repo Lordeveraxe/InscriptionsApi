@@ -56,5 +56,35 @@ namespace InscriptionsApi.Controllers
 
             return CreatedAtAction(nameof(Get), new { key = key}, new { Value = value, Time = time });
         }
+
+        public class RedisDataModel
+        {
+            public string Key { get; set; }
+            public string Value { get; set; }
+        }
+
+
+        [HttpGet("withKey {key}")]
+        [AllowAnonymous]
+        public IActionResult GetKeyAndValue(string key)
+        {
+            var redisDatabase = _redisConnection.GetDatabase();
+
+            // Obtiene el valor de la clave en Redis
+            var value = redisDatabase.StringGet(key);
+
+            if (value.HasValue)
+            {
+                var redisData = new RedisDataModel
+                {
+                    Key = key,
+                    Value = value.ToString()
+                };
+
+                return Ok(redisData);
+            }
+
+            return NotFound();
+        }
     }
 }
