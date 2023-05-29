@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 using System.Configuration;
 using System.Text;
 using System.Text.Json.Serialization;
@@ -82,6 +83,20 @@ builder.Services.AddAuthorization(options =>
         .Build();
 });
 builder.Services.AddControllers();
+
+
+
+var connectionString = "mi-redis-cache.redis.cache.windows.net:6380,password=qWSX4Yv1FMBJLgj0LDk4HwlIXQAwcnpLIAzCaMw6aVc=,ssl=True,abortConnect=False";
+var configurationOptions = ConfigurationOptions.Parse(connectionString);
+
+// Crea el objeto ConnectionMultiplexer para conectarse a Redis
+var redisConnection = ConnectionMultiplexer.Connect(configurationOptions);
+
+// Agrega el objeto ConnectionMultiplexer al servicio de la aplicación
+builder.Services.AddSingleton(redisConnection);
+
+
+
 var app = builder.Build();
 app.UseCors(x => x
             .AllowAnyOrigin()

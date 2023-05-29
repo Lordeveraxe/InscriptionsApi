@@ -28,7 +28,7 @@ namespace ApiMaterias.Controllers
 
 
         [HttpGet]
-        [Authorize]
+        
         public async Task<ActionResult<IEnumerable<Subject>>> GetSubjects()
         {
             if (_context.Subjects == null)
@@ -40,7 +40,7 @@ namespace ApiMaterias.Controllers
         }
 
         [HttpGet("withSorts")]
-        [Authorize]
+        
         public async Task<ActionResult<IEnumerable<Subject>>> GetSubjectsWithFilters(string sortBy = "Id", string sortOrder = "asc", int page = 1, int pageSize = 10)
         {
             if (_context.Subjects == null)
